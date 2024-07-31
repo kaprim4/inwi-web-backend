@@ -1,0 +1,50 @@
+server:
+    port: 9002
+
+spring:
+    application:
+        name: distributer-service
+    datasource:
+        password: yahya2024
+        url: jdbc:postgresql://postgres:5432/postgres-inwi
+        username: postgres
+    jpa:
+        hibernate:
+            ddl-auto: update
+        properties:
+            hibernate:
+                dialect: org.hibernate.dialect.PostgreSQLDialect
+                format_sql: true
+        show-sql: true
+
+    security:
+        oauth2:
+            resourceserver:
+                jwt:
+                    issuer-uri: http://keycloak:8080/realms/hcd-management
+
+eureka:
+    instance:
+        prefer-ip-address: true
+        hostname: eureka-0
+    client:
+        serviceUrl:
+            defaultZone: http://eureka:8761/eureka
+        register-with-eureka: true
+        fetch-registry: true
+
+management:
+    zipkin:
+        tracing:
+            endpoint: http://zipkin:9411/api/v2/spans
+    tracing:
+        sampling:
+            probability: 1.0
+    endpoints:
+        web:
+            exposure:
+                include: prometheus
+
+logging:
+    pattern:
+        level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"

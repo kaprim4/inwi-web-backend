@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: distributer-service-app
+  name: distributer-service-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: distributer-service-app
+  strategy: {}
+  template:
+    metadata:
+
+      labels:
+        app: distributer-service-app
+    spec:
+      containers:
+        - env:
+            - name: SPRING_DATASOURCE_URL
+              value: jdbc:postgresql://postgres:5432/postgres-inwi
+            - name: SPRING_DATASOURCE_USERNAME
+              value: "postgres"
+            - name: SPRING_DATASOURCE_PASSWORD
+              value: "password"
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+          image: alismak/inwi-distributer-service:1.0.0
+          name: distributer-service-app
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9002
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: distributer-service-svc
+  name: distributer-service-svc
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 9002
+  selector:
+    app: distributer-service-app
+status:
+  loadBalancer: {}

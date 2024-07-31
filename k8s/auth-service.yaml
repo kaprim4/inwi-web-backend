@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: auth-service-app
+  name: auth-service-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: auth-service-app
+  strategy: {}
+  template:
+    metadata:
+
+      labels:
+        app: auth-service-app
+    spec:
+      containers:
+        - env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: docker
+          image: alismak/inwi-auth-service:1.0.0
+          name: auth-service-app
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 9001
+          resources: {}
+      restartPolicy: Always
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: auth-service-svc
+  name: auth-service-svc
+spec:
+  type: ClusterIP
+  ports:
+    - port: 80
+      targetPort: 9001
+  selector:
+    app: auth-service-app
+status:
+  loadBalancer: {}
